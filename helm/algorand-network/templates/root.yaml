@@ -16,7 +16,8 @@ spec:
           env:
             - name: NETWORK_NAME
               value: {{ .Release.namespace }}
-          command: ['algod', '-d', '/root/private-network/Node']
+            - name: DATA_DIR
+              value: /root/private-network/Node
           ports:
             - containerPort: 4560
             - containerPort: 8581
@@ -41,7 +42,8 @@ spec:
           env:
             - name: NETWORK_NAME
               value: {{ .Release.namespace }}
-          command: ['algod', '-d', '/root/private-network/Primary']
+            - name: DATA_DIR
+              value: /root/private-network/Primary
           ports:
             - containerPort: 4560
             - containerPort: 8581

@@ -12,4 +12,4 @@ cp /root/private-network/node-genesis.json /root/private-network/Node/genesis.js
 cat /root/private-network/Primary/genesis.json | jq -r ".network = \"${NETWORK_NAME}\"" > /root/private-network/primary-genesis.json
 cp /root/private-network/primary-genesis.json /root/private-network/Primary/genesis.json
 
-/bin/bash "$*"
+algod -d ${DATA_DIR}

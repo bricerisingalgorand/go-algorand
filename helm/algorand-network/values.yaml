@@ -7,10 +7,21 @@ relay:
   count: 3
 
 elasticsearch:
+  replicas: 1
   masterService: telemetry
   uname: telemetry
+  extraEnvs:
+    - name: ELASTIC_USERNAME
+      value: telemetry-v9
+    - name: ELASTIC_PASSWORD
+      value: oq%$FA1TOJ!yYeMEcJ7D688eEOE#MGCu
 
 kibana:
   service:
     type: LoadBalancer
   elasticsearchHosts: http://telemetry:9200
+  extraEnvs:
+    - name: ELASTICSEARCH_USERNAME
+      value: telemetry-v9
+    - name: ELASTICSEARCH_PASSWORD
+      value: oq%$FA1TOJ!yYeMEcJ7D688eEOE#MGCu

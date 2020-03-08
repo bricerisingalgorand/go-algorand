@@ -17,19 +17,13 @@ spec:
         - name: relay
           image: {{ $node_image }}:{{ $node_tag }}
           imagePullPolicy: Never
-          command: ['algod', '-d', '/etc/node-config']
           env:
             - name: NETWORK_NAME
               value: {{ $network_name }}
+            - name: DATA_DIR
+              value: /root/private-network/Node
           ports:
             - containerPort: 4560
             - containerPort: 8581
             - containerPort: 9106
-          volumeMounts:
-            - name: config-volume
-              mountPath: /etc/node-config
-      volumes:
-        - name: config-volume
-          configMap:
-            name: node-config
 {{end}}
