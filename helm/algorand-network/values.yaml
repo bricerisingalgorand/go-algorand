@@ -1,0 +1,16 @@
+node:
+  image: algorand/node
+  tag: latest
+  count: 1
+
+relay:
+  count: 3
+
+elasticsearch:
+  masterService: telemetry
+  uname: telemetry
+
+kibana:
+  service:
+    type: LoadBalancer
+  elasticsearchHosts: http://telemetry:9200

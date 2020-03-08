@@ -1,0 +1,16 @@
+{{range $i, $e := until (int .Values.relay.count)}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: relay-{{$i}}
+  annotations:
+spec:
+  selector:
+    app: relay-{{$i}}
+  ports:
+    - name: algobootstrap
+      protocol: TCP
+      port: 4560
+      targetPort: 4560
+---
+{{end}}

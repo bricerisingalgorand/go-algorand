@@ -1,0 +1,35 @@
+{{- $node_image  := .Values.node.image -}}
+{{- $node_tag  := .Values.node.tag -}}
+{{- $network_name := .Release.namespace -}}
+{{range $i, $e := until (int .Values.relay.count) }}
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: relay-{{$i}}
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: relay-{{$i}}
+    spec:
+      containers:
+        - name: relay
+          image: {{ $node_image }}:{{ $node_tag }}
+          imagePullPolicy: Never
+          command: ['algod', '-d', '/etc/node-config']
+          env:
+            - name: NETWORK_NAME
+              value: {{ $network_name }}
+          ports:
+            - containerPort: 4560
+            - containerPort: 8581
+            - containerPort: 9106
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/node-config
+      volumes:
+        - name: config-volume
+          configMap:
+            name: node-config
+{{end}}

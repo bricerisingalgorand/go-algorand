@@ -1,0 +1,5 @@
+name: algorand-network
+version: 1.0
+description: Creates an algorand network in kubernetes
+maintainers:
+  - name: Brice Rising

@@ -1,0 +1,30 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nodes
+spec:
+  replicas: {{ .Values.node.count }}
+  template:
+    metadata:
+      labels:
+        app: nodes
+    spec:
+      containers:
+        - name: node
+          image: {{ .Values.node.image }}:{{ .Values.node.tag }}
+          imagePullPolicy: Never
+          command: ['algod', '-d', '/root/private-network/Node']
+          env:
+            - name: NETWORK_NAME
+              value: {{ .Release.namespace }}
+          ports:
+            - containerPort: 4560
+            - containerPort: 8581
+            - containerPort: 9106
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/node-config
+      volumes:
+        - name: config-volume
+          configMap:
+            name: node-config

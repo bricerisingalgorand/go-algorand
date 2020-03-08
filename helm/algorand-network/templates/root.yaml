@@ -1,0 +1,63 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: root-node1
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: root-node1
+    spec:
+      containers:
+        - name: node
+          image: {{ .Values.node.image }}:{{ .Values.node.tag }}
+          imagePullPolicy: Never
+          env:
+            - name: NETWORK_NAME
+              value: {{ .Release.namespace }}
+          command: ['algod', '-d', '/root/private-network/Node']
+          ports:
+            - containerPort: 4560
+            - containerPort: 8581
+            - containerPort: 9106
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: root-relay-1
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: root-relay-1
+    spec:
+      containers:
+        - name: node
+          image: {{ .Values.node.image }}:{{ .Values.node.tag }}
+          imagePullPolicy: Never
+          env:
+            - name: NETWORK_NAME
+              value: {{ .Release.namespace }}
+          command: ['algod', '-d', '/root/private-network/Primary']
+          ports:
+            - containerPort: 4560
+            - containerPort: 8581
+            - containerPort: 9106
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: root-relay-1
+  annotations:
+spec:
+  type: LoadBalancer
+  selector:
+    app: root-relay-1
+  ports:
+    - name: algobootstrap
+      protocol: TCP
+      port: 4560
+      targetPort: 4560

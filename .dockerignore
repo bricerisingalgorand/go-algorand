@@ -42,3 +42,6 @@ tmp/node_pkgs
 data/transactions/logic/*.md
 
 *.pem
+
+docker-compose.yml
+*Dockerfile
