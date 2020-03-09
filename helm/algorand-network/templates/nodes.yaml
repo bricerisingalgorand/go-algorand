@@ -22,7 +22,3 @@ spec:
             - containerPort: 4560
             - containerPort: 8581
             - containerPort: 9106
-      volumes:
-        - name: config-volume
-          configMap:
-            name: node-config
