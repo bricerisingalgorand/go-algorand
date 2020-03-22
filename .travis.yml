@@ -1,24 +1,19 @@
 dist: bionic
-go:
-  - "1.12"
-go_import_path: github.com/algorand/go-algorand
-language: go
 sudo: required
 
 # Don't build tags
 if: tag IS blank
 
 stages:
-  - name: build_commit
-    if: NOT (branch =~ /^rel\//) AND type != pull_request
-  - name: build_pr
-    if: type = pull_request
-  - name: build_release
-    if: branch =~ /^rel\// AND type != pull_request
+  - name: build
+    if: branch =~ /^rel\// OR type = pull_request
   - name: deploy
     if: branch =~ /^rel\// AND type != pull_request
-  - name: post_deploy
-    if: branch =~ /^rel\// AND type != pull_request
+
+install:
+  - python3.7 -m venv venv
+  - export PATH=`pwd`/venv/bin:${PATH}
+  - pip3.7 install mulecli
 
 jobs:
   allow_failures:
@@ -28,86 +23,30 @@ jobs:
     - name: External ARM Deploy
     - name: Test Release Builds
   include:
-    - stage: build_commit
+    - stage: build
       os: linux
+      name: Linux AMD64 Build/Integration Test
+      arch: amd64
       script:
-        - scripts/travis/build_test.sh
-
-    - stage: build_pr
-      os: linux
-      name: Ubuntu AMD64 Build
-      script:
-        - scripts/travis/build_test.sh
+        - scripts/travis/travis_wait.sh 90 mule build-linux-amd64
     - # same stage, parallel job
+      name: Linux ARM64 Build/Integration Test
       os: linux
-      name: Ubuntu AMD64 Integration Test
+      arch: arm64
       script:
-        - ./scripts/travis/integration_test.sh
-    - # same stage, parallel job
-      name: External ARM64 Build
-      os: linux
-      env:
-        - BUILD_TYPE: "external_build"
-        - TARGET_PLATFORM: "linux-arm64"
-      addons:
-        apt:
-          packages:
-            - awscli
-      script:
-        - scripts/travis/external_build.sh ./scripts/travis/build_test.sh
-    - # same stage, parallel job
-      name: External ARM64 Integration Test
-      os: linux
-      env:
-        - BUILD_TYPE: "external_build"
-        - TARGET_PLATFORM: "linux-arm64"
-      addons:
-        apt:
-          packages:
-            - awscli
-      script:
-        - scripts/travis/external_build.sh ./scripts/travis/integration_test.sh
+        - scripts/travis/travis_wait.sh 90 mule build-linux-arm64
     - # same stage, parallel job
       os: osx
       osx_image: xcode11
-      name: MacOS AMD64 Build
+      arch: amd64
+      name: MacOS AMD64 Build/Integration Test
+      go:
+        - "1.12"
+      go_import_path: github.com/algorand/go-algorand
+      language: go
       script:
-        - scripts/travis/build_test.sh
-    - # same stage, parallel job
-      os: osx
-      osx_image: xcode11
-      name: MacOS AMD64 Integration Test
-      script:
-        - ./scripts/travis/integration_test.sh
-
-    - stage: build_release
-      os: linux
-      name: Ubuntu AMD64 Build
-      script:
-        - ./scripts/travis/build_test.sh
-    - # same stage, parallel job
-      os: linux
-      name: Ubuntu AMD64 Integration Test
-      script:
-        - ./scripts/travis/integration_test.sh
-    - # same stage, parallel job
-      os: osx
-      osx_image: xcode11
-      name: MacOS AMD64 Build
-      script:
-        - scripts/travis/build_test.sh
-    - # same stage, parallel job
-      name: External ARM64 Integration Test
-      os: linux
-      env:
-        - BUILD_TYPE: "external_build"
-        - TARGET_PLATFORM: "linux-arm64"
-      addons:
-        apt:
-          packages:
-            - awscli
-      script:
-        - scripts/travis/external_build.sh ./scripts/travis/integration_test.sh
+        - ./scripts/configure_dev.sh
+        - scripts/travis/travis_wait.sh 90 mule build-local
 
     - stage: deploy
       name: Ubuntu Deploy
@@ -160,9 +99,9 @@ addons:
       - libboost-all-dev
       - fakeroot
       - rpm
-      - python3-venv
       - libssl-dev
       - libffi-dev
+      - python3.7-venv
   artifacts:
     s3_region: "us-east-1"
     paths:
