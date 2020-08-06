@@ -1,4 +1,4 @@
-ARG GOLANG_VERSION
+ARG GOLANG_VERSION="1.12"
 FROM arm32v6/golang:${GOLANG_VERSION}-alpine
 RUN apk update && \
     apk add make && \
