@@ -2051,7 +2051,7 @@ func justHost(hostPort string) string {
 // SetUserAgentHeader adds the User-Agent header to the provided heades map.
 func SetUserAgentHeader(header http.Header) {
 	version := config.GetCurrentVersion()
-	ua := fmt.Sprintf("algod/%d.%d (%s; commit=%s; %d) %s(%s)", version.Major, version.Minor, version.Channel, version.CommitHash, version.BuildNumber, runtime.GOOS, runtime.GOARCH)
+	ua := fmt.Sprintf("algod/%s.%s (%s; commit=%s; %s) %s(%s)", version.Major, version.Minor, version.Channel, version.CommitHash, version.BuildNumber, runtime.GOOS, runtime.GOARCH)
 	header.Set(UserAgentHeader, ua)
 }
 

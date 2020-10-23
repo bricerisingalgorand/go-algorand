@@ -176,7 +176,7 @@ var versionCmd = &cobra.Command{
 			fmt.Printf("Version: %v \n", response.Versions)
 			fmt.Printf("GenesisID: %s \n", response.GenesisID)
 			if (response.Build != common.BuildVersion{}) {
-				fmt.Printf("Build: %d.%d.%d.%s [%s] (commit #%s)\n", response.Build.Major, response.Build.Minor, response.Build.BuildNumber, response.Build.Channel, response.Build.Branch, response.Build.CommitHash)
+				fmt.Printf("Build: %s.%s.%s.%s [%s] (commit #%s)\n", response.Build.Major, response.Build.Minor, response.Build.BuildNumber, response.Build.Channel, response.Build.Branch, response.Build.CommitHash)
 			}
 		})
 	},

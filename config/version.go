@@ -29,23 +29,23 @@ import (
 
 // VersionMajor is the Major semantic version number (#.y.z) - changed when first public release (0.y.z -> 1.y.z)
 // and when backwards compatibility is broken.
-const VersionMajor = 2
+const VersionMajor = "2"
 
 // VersionMinor is the Minor semantic version number (x.#.z) - changed when backwards-compatible features are introduced.
 // Not enforced until after initial public release (x > 0).
-const VersionMinor = 1
+const VersionMinor = "1"
 
 // Version is the type holding our full version information.
 type Version struct {
 
 	// Algorand's major version number
-	Major int
+	Major string
 
 	// Algorand's minor version number
-	Minor int
+	Minor string
 
 	// Algorand's Build Number
-	BuildNumber int
+	BuildNumber string
 
 	// Suffix for any metadata
 	Suffix string
@@ -64,16 +64,20 @@ type Version struct {
 }
 
 func (v Version) String() string {
-	return fmt.Sprintf("%d.%d.%d", v.Major, v.Minor, v.BuildNumber)
+	return fmt.Sprintf("%s.%s.%s", v.Major, v.Minor, v.BuildNumber)
 }
 
 // AsUInt64 returns the version struct in integer form
 func (v Version) AsUInt64() (versionInfo uint64) {
-	versionInfo = uint64(v.Major)
+	major, _ := strconv.ParseUint(v.Major, 10, 64)
+	minor, _ := strconv.ParseUint(v.Minor, 10, 64)
+	buildNumber, _ := strconv.ParseUint(v.BuildNumber, 10, 64)
+
+	versionInfo = major
 	versionInfo <<= 16
-	versionInfo |= uint64(v.Minor)
+	versionInfo |= minor
 	versionInfo <<= 16
-	versionInfo |= uint64(v.BuildNumber)
+	versionInfo |= buildNumber
 	return
 }
 
@@ -97,7 +101,7 @@ func convertToInt(val string) int {
 var currentVersion = Version{
 	Major:         VersionMajor,
 	Minor:         VersionMinor,
-	BuildNumber:   convertToInt(BuildNumber), // set using -ldflags
+	BuildNumber:   BuildNumber, // set using -ldflags
 	Suffix:        "",
 	CommitHash:    CommitHash,
 	Branch:        Branch,

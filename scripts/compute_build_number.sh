@@ -35,25 +35,30 @@ VERSION_FILE=config/version.go
 # Otherwise we just calculate the date/time-based BuildNumber
 
 if [ ! "$1" == "-f" ]; then
-    echo ${BUILD_NUMBER}
+    echo "0-RC1"
 else
-    MAJOR_REGEX="VersionMajor = ([[:digit:]]*)"
-    MINOR_REGEX="VersionMinor = ([[:digit:]]*)"
+    if [ -z "${BUILD_VERSION}" ]; then
 
-    while read -r line || [[ -n "$line" ]]; do
-        if [[ ${line} =~ ${MAJOR_REGEX} ]]; then
-            MAJOR=${BASH_REMATCH[1]}
-        elif [[ $line =~ $MINOR_REGEX ]]; then
-            MINOR=${BASH_REMATCH[1]}
-        fi
-        if [[ ${MAJOR} && ${MINOR} ]]; then
-            break
-        fi
-    done < "${VERSION_FILE}"
+        MAJOR_REGEX="VersionMajor = ([[:digit:]]*)"
+        MINOR_REGEX="VersionMinor = ([[:digit:]]*)"
 
-    if [[ ! ${MAJOR} && ${MINOR} ]]; then
-        exit 1
+        while read -r line || [[ -n "$line" ]]; do
+            if [[ ${line} =~ ${MAJOR_REGEX} ]]; then
+                MAJOR=${BASH_REMATCH[1]}
+            elif [[ $line =~ $MINOR_REGEX ]]; then
+                MINOR=${BASH_REMATCH[1]}
+            fi
+            if [[ ${MAJOR} && ${MINOR} ]]; then
+                break
+            fi
+        done < "${VERSION_FILE}"
+
+        if [[ ! ${MAJOR} && ${MINOR} ]]; then
+            exit 1
+        fi
+
+        echo ${MAJOR}.${MINOR}.${BUILD_NUMBER}
+    else
+        echo "${BUILD_VERSION}"
     fi
-
-    echo ${MAJOR}.${MINOR}.${BUILD_NUMBER}
 fi

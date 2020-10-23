@@ -39,13 +39,13 @@ type Version struct {
 type BuildVersion struct {
 	// required: true
 	// Algorand's major version number
-	Major int `json:"major"`
+	Major string `json:"major"`
 	// required: true
 	// Algorand's minor version number
-	Minor int `json:"minor"`
+	Minor string `json:"minor"`
 	// required: true
 	// Algorand's Build Number
-	BuildNumber int `json:"build_number"`
+	BuildNumber string `json:"build_number"`
 	// required: true
 	// Hash of commit the build is based on
 	CommitHash string `json:"commit_hash"`

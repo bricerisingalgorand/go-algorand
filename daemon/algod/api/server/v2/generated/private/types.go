@@ -230,11 +230,11 @@ type AssetParams struct {
 // BuildVersion defines model for BuildVersion.
 type BuildVersion struct {
 	Branch      string `json:"branch"`
-	BuildNumber uint64 `json:"build_number"`
+	BuildNumber string `json:"build_number"`
 	Channel     string `json:"channel"`
 	CommitHash  string `json:"commit_hash"`
-	Major       uint64 `json:"major"`
-	Minor       uint64 `json:"minor"`
+	Major       string `json:"major"`
+	Minor       string `json:"minor"`
 }
 
 // DryrunRequest defines model for DryrunRequest.
