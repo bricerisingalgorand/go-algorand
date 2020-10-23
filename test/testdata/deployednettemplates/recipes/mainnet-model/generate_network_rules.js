@@ -3,6 +3,7 @@ const fs = require('fs');
 const RELAY_BANDWIDTH = 1000
 const SAME_REGION_RELAY_TO_RELAY_LATENCY = 10
 const CROSS_REGION_NODE_BANDWIDTH_FACTOR = 0.8
+const MINIMUM_LATENCY = 10
 
 const countries = JSON.parse(fs.readFileSync('./data/countries.json'))
 const countryBandwidths = JSON.parse(fs.readFileSync('./data/bandwidth.json'))
@@ -40,13 +41,12 @@ countryBandwidths.forEach((countryBandwidth) => {
         continentBandwidths[continent] = {
             bandwidths: []
         }
-        
     }
     continentBandwidths[continent].bandwidths.push(countryBandwidth[1])
 })
 
 const average = (data) => {
-    var sum = data.reduce(function(sum, value){
+    var sum = data.reduce((sum, value) => {
       return sum + value;
     }, 0);
     return sum / data.length
@@ -60,7 +60,10 @@ Object.keys(continentToGroup).forEach((source) => {
     Object.keys(continentToGroup).forEach((target) => {
         sourceGroup = continentToGroup[source]
         targetGroup = continentToGroup[target]
-        const bandwidth = average(continentBandwidths[source]['bandwidths'])
+        filteredBandwidths = continentBandwidths[source]['bandwidths'].filter((value) => {
+            return value > MINIMUM_LATENCY
+        });
+        const bandwidth = average(filteredBandwidths)
         const latency = latencyMap[source][target]
         var relay_to_relay_latency
         var node_bandwidth_factor
